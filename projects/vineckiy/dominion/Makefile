@@ -1,39 +1,61 @@
 CFLAGS = -Wall -fpic -coverage -lm
+BIN = ./bin
 
-rngs.o: rngs.h rngs.c
-	gcc -c rngs.c -g  $(CFLAGS)
+$(BIN):
+	mkdir $(BIN)
 
-dominion.o: dominion.h dominion.c rngs.o
-	gcc -c dominion.c -g  $(CFLAGS)
+$(BIN)/rngs.o: $(BIN) rngs.h rngs.c
+	gcc -o $(BIN)/rngs.o -c rngs.c -g $(CFLAGS)
 
-playdom: dominion.o playdom.c
-	gcc -o playdom playdom.c -g dominion.o rngs.o $(CFLAGS)
+$(BIN)/dominion.o: $(BIN) dominion.h dominion.c $(BIN)/rngs.o
+	gcc -o $(BIN)/dominion.o -c dominion.c -g $(CFLAGS)
+
+$(BIN)/playdom.o: $(BIN) $(BIN)/dominion.o playdom.c
+	gcc -o $(BIN)/playdom.o -c playdom.c -g $(BIN)/dominion.o $(BIN)/rngs.o $(CFLAGS)
+
+playdom: $(BIN) $(BIN)/playdom.o
+	gcc -o $(BIN)/playdom -g $(BIN)/playdom.o $(BIN)/dominion.o $(BIN)/rngs.o $(CFLAGS)
 #To run playdom you need to entere: ./playdom <any integer number> like ./playdom 10*/
-testDrawCard: testDrawCard.c dominion.o rngs.o
-	gcc  -o testDrawCard -g  testDrawCard.c dominion.o rngs.o $(CFLAGS)
 
-badTestDrawCard: badTestDrawCard.c dominion.o rngs.o
-	gcc -o badTestDrawCard -g  badTestDrawCard.c dominion.o rngs.o $(CFLAGS)
+$(BIN)/testDrawCard.o: $(BIN) testDrawCard.c $(BIN)/dominion.o $(BIN)/rngs.o
+	gcc -o $(BIN)/testDrawCard.o -c testDrawCard.c -g $(BIN)/dominion.o $(BIN)/rngs.o $(CFLAGS)
 
-testBuyCard: testDrawCard.c dominion.o rngs.o
-	gcc -o testDrawCard -g  testDrawCard.c dominion.o rngs.o $(CFLAGS)
+testDrawCard: $(BIN)/testDrawCard.o
+	gcc -o $(BIN)/testDrawCard -g $(BIN)/testDrawCard.o $(BIN)/dominion.o $(BIN)/rngs.o $(CFLAGS)
 
-testAll: dominion.o testSuite.c
-	gcc -o testSuite testSuite.c -g  dominion.o rngs.o $(CFLAGS)
+$(BIN)/badTestDrawCard.o: $(BIN) badTestDrawCard.c $(BIN)/dominion.o $(BIN)/rngs.o
+	gcc -o $(BIN)/badTestDrawCard.o -c badTestDrawCard.c -g $(BIN)/dominion.o $(BIN)/rngs.o $(CFLAGS)
 
-interface.o: interface.h interface.c
-	gcc -c interface.c -g  $(CFLAGS)
+badTestDrawCard: $(BIN)/badTestDrawCard.o
+	gcc -o $(BIN)/badTestDrawCard -g $(BIN)/badTestDrawCard.o $(BIN)/dominion.o $(BIN)/rngs.o $(CFLAGS)
 
-runtests: testDrawCard 
-	./testDrawCard &> unittestresult.out
+$(BIN)/testBuyCard.o: $(BIN) testBuyCard.c $(BIN)/dominion.o $(BIN)/rngs.o
+	gcc -o $(BIN)/testBuyCard.o -c testBuyCard.c -g $(BIN)/dominion.o $(BIN)/rngs.o $(CFLAGS)
+
+testBuyCard: $(BIN)/testBuyCard.o
+	gcc -o $(BIN)/testBuyCard -g $(BIN)/testBuyCard.o $(BIN)/dominion.o $(BIN)/rngs.o $(CFLAGS)
+
+$(BIN)/testSuite.o: $(BIN) testSuite.c $(BIN)/dominion.o
+	gcc -o $(BIN)/testSuite.o -c testSuite.c -g $(BIN)/dominion.o $(BIN)/rngs.o $(CFLAGS)
+
+testAll: $(BIN)/testSuite.o
+	gcc -o $(BIN)/testSuite -g $(BIN)/testSuite.o $(BIN)/dominion.o $(BIN)/rngs.o $(CFLAGS)
+
+$(BIN)/interface.o: $(BIN) interface.h interface.c
+	gcc -o $(BIN)/interface.o -c interface.c -g $(CFLAGS)
+
+runtests: $(BIN) testDrawCard
+	$(BIN)/testDrawCard &> unittestresult.out
 	gcov dominion.c >> unittestresult.out
 	cat dominion.c.gcov >> unittestresult.out
 
+$(BIN)/player.o: $(BIN) player.c $(BIN)/interface.o
+	gcc -o $(BIN)/player.o -c player.c -g $(BIN)/dominion.o $(BIN)/rngs.o $(BIN)/interface.o $(CFLAGS)
 
-player: player.c interface.o
-	gcc -o player player.c -g  dominion.o rngs.o interface.o $(CFLAGS)
+player: $(BIN)/player.o
+	gcc -o $(BIN)/player -g $(BIN)/player.o $(BIN)/dominion.o $(BIN)/rngs.o $(BIN)/interface.o $(CFLAGS)
 
 all: playdom player 
 
 clean:
-	rm -f *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe
+	rm -fr $(BIN)/*
