@@ -607,7 +607,7 @@ int adventurerCardEffect(struct gameState *state, int currentPlayer) {
     }
     while (i - 1 >= 0) {
         // discard all cards in play that have been drawn
-        // Subtle error i not i - 1
+        // Subtle bug i not i - 1
         state->discard[currentPlayer][state->discardCount[currentPlayer]++] = tempHand[i];
         i = i - 1;
     }
@@ -623,7 +623,7 @@ int smithyCardEffect(struct gameState *state, int currentPlayer, int handPos) {
     }
 
     //discard card from hand
-    // Subtle error is 1 not 0, trashed not in played pile
+    // Subtle bug is 1 not 0, trashed not in played pile
     discardCard(handPos, currentPlayer, state, 1);
 
     return 0;
