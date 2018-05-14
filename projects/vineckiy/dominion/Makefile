@@ -92,7 +92,25 @@ $(BIN)/cardtest4.o: $(BIN) cardtest4.c
 cardtest4: $(BIN)/cardtest4.o $(BIN)/cardtest4.o $(BIN)/dominion.o $(BIN)/rngs.o $(BIN)/testAssert.o
 	gcc -o $(BIN)/cardtest4 -g $(BIN)/cardtest4.o $(BIN)/dominion.o $(BIN)/rngs.o $(BIN)/testAssert.o $(CFLAGS)
 
-unittestresults.out: $(BIN) unittest1 unittest2 unittest3 unittest4 cardtest1 cardtest2 cardtest3 cardtest4
+$(BIN)/randomtestadventurer.o: $(BIN) randomtestadventurer.c
+	gcc -o $(BIN)/randomtestadventurer.o -c randomtestadventurer.c $(CFLAGS)
+
+randomtestadventurer: $(BIN)/randomtestadventurer.o $(BIN)/randomtestadventurer.o $(BIN)/dominion.o $(BIN)/rngs.o $(BIN)/testAssert.o
+	gcc -o $(BIN)/randomtestadventurer -g $(BIN)/randomtestadventurer.o $(BIN)/dominion.o $(BIN)/rngs.o $(BIN)/testAssert.o $(CFLAGS)
+
+$(BIN)/randomtestcard1.o: $(BIN) randomtestcard1.c
+	gcc -o $(BIN)/randomtestcard1.o -c randomtestcard1.c $(CFLAGS)
+
+randomtestcard1: $(BIN)/randomtestcard1.o $(BIN)/randomtestcard1.o $(BIN)/dominion.o $(BIN)/rngs.o $(BIN)/testAssert.o
+	gcc -o $(BIN)/randomtestcard1 -g $(BIN)/randomtestcard1.o $(BIN)/dominion.o $(BIN)/rngs.o $(BIN)/testAssert.o $(CFLAGS)
+
+$(BIN)/randomtestcard2.o: $(BIN) randomtestcard2.c
+	gcc -o $(BIN)/randomtestcard2.o -c randomtestcard2.c $(CFLAGS)
+
+randomtestcard2: $(BIN)/randomtestcard2.o $(BIN)/randomtestcard2.o $(BIN)/dominion.o $(BIN)/rngs.o $(BIN)/testAssert.o
+	gcc -o $(BIN)/randomtestcard2 -g $(BIN)/randomtestcard2.o $(BIN)/dominion.o $(BIN)/rngs.o $(BIN)/testAssert.o $(CFLAGS)
+
+unittestresults.out: $(BIN) unittest1 unittest2 unittest3 unittest4 cardtest1 cardtest2 cardtest3 cardtest4 randomtestadventurer randomtestcard1 randomtestcard2
 	$(BIN)/unittest1 > $(BIN)/unittestresult.out 2>&1
 	$(BIN)/unittest2 >> $(BIN)/unittestresult.out 2>&1
 	$(BIN)/unittest3 >> $(BIN)/unittestresult.out 2>&1
@@ -101,6 +119,9 @@ unittestresults.out: $(BIN) unittest1 unittest2 unittest3 unittest4 cardtest1 ca
 	$(BIN)/cardtest2 >> $(BIN)/unittestresult.out 2>&1
 	$(BIN)/cardtest3 >> $(BIN)/unittestresult.out 2>&1
 	$(BIN)/cardtest4 >> $(BIN)/unittestresult.out 2>&1
+	$(BIN)/randomtestadventurer >> $(BIN)/unittestresult.out 2>&1
+	$(BIN)/randomtestcard1 >> $(BIN)/unittestresult.out 2>&1
+	$(BIN)/randomtestcard2 >> $(BIN)/unittestresult.out 2>&1
 	gcov -o $(BIN) dominion.c >> $(BIN)/unittestresult.out 2>&1
 	cat dominion.c.gcov >> $(BIN)/unittestresult.out 2>&1
 	rm dominion.c.gcov
