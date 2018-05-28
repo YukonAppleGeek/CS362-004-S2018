@@ -35,7 +35,7 @@ int testSmithyEffectGainCards() {
 
     state->discardCount[0] = 0;
 
-    int result = cardEffect(smithy, 0, 0, 0, state, 1, (int*)NULL);
+    int result = cardEffect(smithy, 0, 0, 0, state, 0, (int*)NULL);
     fails += -1 * shouldEqual(0, result, "effect should succeeded");
     fails += -1 * shouldEqual(4, state->handCount[0], "should have gained 3 cards");
 
@@ -59,7 +59,7 @@ int testSmithyEffectDiscard() {
     state->playedCards[0] = 0;
     state->playedCardCount = 0;
 
-    int result = cardEffect(smithy, 0, 0, 0, state, 0, (int*)NULL);
+    int result = cardEffect(smithy, 0, 0, 0, state, 1, (int*)NULL);
     fails += -1 * shouldEqual(0, result, "effect should succeeded");
     fails += -1 * shouldEqual(1, state->playedCardCount, "should have played card");
     fails += -1 * shouldEqual(smithy, state->playedCards[0], "discarded is not smithy");
